@@ -1,100 +1,8 @@
-// // src/ThreeScene.jsx
-// import React, { useEffect, useRef } from 'react';
-// import * as THREE from 'three';
-// import { OrbitControls } from 'three-stdlib';
-// import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-
-// const ThreeScene = () => {
-//   const mountRef = useRef(null);
-
-//   useEffect(() => {
-//     const scene = new THREE.Scene();
-//     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-//     const renderer = new THREE.WebGLRenderer({ antialias: true });
-//     renderer.setSize(window.innerWidth, window.innerHeight);
-//     mountRef.current.appendChild(renderer.domElement);
-
-//     camera.position.set(-20, 20, 25);
-//     camera.lookAt(0, 0, 0);
-
-//     const floorGeometry = new THREE.PlaneGeometry(40, 25);
-//     const floorMaterial = new THREE.MeshBasicMaterial({ color: 0x7CFC00 });
-//     const floor = new THREE.Mesh(floorGeometry, floorMaterial);
-//     floor.rotation.x = -Math.PI / 2;
-//     floor.position.set(-3, 0, 0);
-//     scene.add(floor);
-
-//     const createWall = (width, height, depth, x, y, z, rotationY = 0) => {
-//       const wallGeometry = new THREE.BoxGeometry(width, height, depth);
-//       const wallMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
-//       const wall = new THREE.Mesh(wallGeometry, wallMaterial);
-//       wall.position.set(x, y, z);
-//       wall.rotation.y = rotationY;
-//       scene.add(wall);
-//     };
-
-//     // Outer walls
-//     createWall(0.2, 5, 25, 17, 2.5, 0);
-//     createWall(0.2, 5, 25, 4.5, 2.5, -12.5, -Math.PI / 2);
-//     createWall(0.2, 5, 25, -8, 2.5, 0);
-//     createWall(0.2, 5, 15, -15.5, 2.5, -7.5, -Math.PI / 2);
-//     createWall(0.2, 5, 20, -23, 2.5, 2.5);
-//     createWall(0.2, 5, 15, -15.5, 2.5, 12.5, -Math.PI / 2);
-
-//     // Load the GLTF model
-//     const loader = new GLTFLoader();
-//     loader.load('./models/desktop_pc/scene.gltf', (gltf) => {
-//       const model = gltf.scene;
-//       model.position.set(0, 0, 0);
-//       scene.add(model);
-//     });
-
-//     const controls = new OrbitControls(camera, renderer.domElement);
-//     controls.enableDamping = true;
-//     controls.dampingFactor = 0.25;
-//     controls.minDistance = 1;
-//     controls.maxDistance = 50;
-
-//     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-//     scene.add(ambientLight);
-
-//     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-//     directionalLight.position.set(10, 10, 10);
-//     scene.add(directionalLight);
-
-//     const animate = () => {
-//       requestAnimationFrame(animate);
-//       controls.update();
-//       renderer.render(scene, camera);
-//     };
-//     animate();
-
-//     const handleResize = () => {
-//       const width = window.innerWidth;
-//       const height = window.innerHeight;
-//       renderer.setSize(width, height);
-//       camera.aspect = width / height;
-//       camera.updateProjectionMatrix();
-//     };
-//     window.addEventListener('resize', handleResize);
-
-//     return () => {
-//       window.removeEventListener('resize', handleResize);
-//       mountRef.current.removeChild(renderer.domElement);
-//     };
-//   }, []);
-
-//   return <div ref={mountRef} className="w-full h-screen"></div>;
-// };
-// export default ThreeScene;
-
-
-
-// src/ThreeScene.js
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three-stdlib';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import CanvasLoader from './Loader';
 
 // const Model = ({ path }) => {
 //   const { scene } = useGLTF(path);
@@ -110,6 +18,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 const ThreeScene = () => {
   const mountRef = useRef(null);
+    const [loading, setLoading] = useState(true);
 
   useEffect(() => {
 
@@ -388,7 +297,11 @@ const ThreeScene = () => {
     };
   }, []);
 
-  return <div ref={mountRef} className="w-full h-screen"></div>;
+  return (
+    <div ref={mountRef} style={{ position: 'relative', width: '100%', height: '100vh' }}>
+      {loading && <CanvasLoader />}
+    </div>
+    );
 };
 
 export default ThreeScene;
